@@ -106,13 +106,20 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression
 ```
 
 5)(This command starts the configuration wizard.).
-   ```shell .\config.cmd ```  - for windows                         
-   ```shell .\config.sh ```   - for linux/mac
+   ```shell 
+   .\config.cmd
+   ```  - for windows                         
+   ```shell
+   .\config.sh
+   ```   - for linux/mac
 
 
 - Then You’ll be prompted to:
 
-Enter your Azure DevOps organization URL :  ```shell https://dev.azure.com/{your-organization} ```
+Enter your Azure DevOps organization URL :
+```shell
+https://dev.azure.com/{your-organization}
+```
 
 Provide a Personal Access Token (PAT) for authentication.             (You will find the PAT in the user settings of the azure devops)
 
@@ -140,7 +147,8 @@ az login
 ```  
 2)(Downloads AKS credentials and updates your local kubeconfig to talk to your cluster.)
 
-```shell az aks get-credentials --name voteappcluster --overwrite-existing --resource-group vote-app-ci
+```shell
+az aks get-credentials --name voteappcluster --overwrite-existing --resource-group vote-app-ci
 ```        
 
 3)(Creates a new Kubernetes namespace called argocd. ArgoCD will be deployed and run inside this namespace.)
@@ -151,12 +159,14 @@ kubectl create namespace argocd
 
 
 4)(Installs ArgoCD components (UI, API server, controller, etc.) into the argocd namespace. The YAML is fetched directly from ArgoCD’s GitHub repo.)
-```shell kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```shell
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```                    
 
 
 5)(Lists all pods in the argocd namespace to verify the deployment status.)
-```shell kubectl get pods -n argocd
+```shell
+kubectl get pods -n argocd
 ```                                      
 
 
@@ -166,25 +176,30 @@ kubectl create namespace argocd
 - so we have to get the argocd login password
 
 6)(Lists secrets; one of them is argocd-initial-admin-secret which contains the admin password for ArgoCD UI.)
-```shell  kubectl get secrets -n argocd
+```shell
+kubectl get secrets -n argocd
 ```                                
 
 7)(Opens the secret in your default editor to view the base64-encoded admin password.)
-```shell  kubectl edit secret argocd-initial-admin-secret -n argocd      
+```shell
+kubectl edit secret argocd-initial-admin-secret -n argocd      
 ```
 
 8)(Decodes the base64-encoded password to plain text. You use this password to log into the ArgoCD web UI.)
-```shell  echo UDhCV0hZYjJTWWdKbDRpQQ== | base64 --decode
+```shell
+echo UDhCV0hZYjJTWWdKbDRpQQ== | base64 --decode
 ```              
 
 
 9)(Lists all services running in the argocd namespace.)
-```shell  kubectl get svc -n argocd
+```shell
+kubectl get svc -n argocd
 ```                                    
 
 
 10)(argocd-server is the main UI/API service for ArgoCD so change that to nodeport. This opens the service manifest so you can change the service type from ClusterIP (default, internal only) to NodePort (accessible externally via node IP and port).
-```shell  kubectl edit svc argocd-server -n argocd
+```shell
+kubectl edit svc argocd-server -n argocd
 ```             
 
 
@@ -193,9 +208,14 @@ kubectl create namespace argocd
 
 
 11)(Shows the IP addresses of your cluster nodes.)
-```shell  kubectl get nodes -o wide
+```shell
+kubectl get nodes -o wide
 ```                                       
 
 
 
--  Now you can access ArgoCD via the NodePort, e.g. ```shell   http://<node-ip>:<node-port>  ```. Don't forget to open the port in the VMSS of the AKS.
+-  Now you can access ArgoCD via the NodePort, e.g.
+-  ```shell
+  http://<node-ip>:<node-port>
+  ```
+-  . Don't forget to open the port in the VMSS of the AKS.
