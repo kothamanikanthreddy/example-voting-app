@@ -141,7 +141,8 @@ Select the agent pool.   :  Enter agent pool name.
 
 * Now connecting to the AKS cluster.
 
-1)(we want to login to the azure portal.)                                                                                                  
+1)(we want to login to the azure portal.)     
+
 ```shell
 az login
 ```  
@@ -152,6 +153,7 @@ az aks get-credentials --name voteappcluster --overwrite-existing --resource-gro
 ```        
 
 3)(Creates a new Kubernetes namespace called argocd. ArgoCD will be deployed and run inside this namespace.)
+
 ```shell
 kubectl create namespace argocd
 ```                                    
@@ -170,28 +172,31 @@ kubectl get pods -n argocd
 ```                                      
 
 
-
-*  Now we have to configure argocd and connect the argocd with the azure git repo.
+- Now we have to configure argocd and connect the argocd with the azure git repo.
 
 - so we have to get the argocd login password
 
 6)(Lists secrets; one of them is argocd-initial-admin-secret which contains the admin password for ArgoCD UI.)
+
 ```shell
 kubectl get secrets -n argocd
 ```                                
 
 7)(Opens the secret in your default editor to view the base64-encoded admin password.)
+
 ```shell
 kubectl edit secret argocd-initial-admin-secret -n argocd      
 ```
 
 8)(Decodes the base64-encoded password to plain text. You use this password to log into the ArgoCD web UI.)
+
 ```shell
 echo UDhCV0hZYjJTWWdKbDRpQQ== | base64 --decode
 ```              
 
 
 9)(Lists all services running in the argocd namespace.)
+
 ```shell
 kubectl get svc -n argocd
 ```                                    
@@ -205,8 +210,6 @@ kubectl edit svc argocd-server -n argocd
 
 
 
-
-
 11)(Shows the IP addresses of your cluster nodes.)
 ```shell
 kubectl get nodes -o wide
@@ -214,8 +217,4 @@ kubectl get nodes -o wide
 
 
 
--  Now you can access ArgoCD via the NodePort, e.g.
--  ```shell
-  http://<node-ip>:<node-port>
-  ```
--  . Don't forget to open the port in the VMSS of the AKS.
+-  Now you can access ArgoCD via the NodePort, e.g.http://<node-ip>:<node-port>. Don't forget to open the port in the VMSS of the AKS.
