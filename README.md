@@ -64,15 +64,14 @@ This isn't an example of a properly architected perfectly designed distributed a
 example of the various types of pieces and languages you might see (queues, persistent data, etc), and how to
 deal with them in Docker at a basic level.
 
-
-                  Azure Devops complete CI CD process of Vote-App Using AKS with the Commands and explanation.  
+Azure Devops complete CI CD process of Vote-App Using AKS with the Commands and explanation.  
 
 
 *   For creating the agent.
 
-  - Here we use a azure virtual machine as a agent.
+- Here we use a azure virtual machine as a agent.
 
-  - For that we should create a virtual machine and after creating we should integrate the pipelines with the agent.
+- For that we should create a virtual machine and after creating we should integrate the pipelines with the agent.
 
 
 * Follow the steps to connect agent.
@@ -86,12 +85,18 @@ deal with them in Docker at a basic level.
  - Now go to the terminal and connect to the virtual machine.
 
  - When we click on the create agent on the pool of the azure devops we get all instructions and commands to create the agent.
-
-   1)mkdir agent ; cd agent                              (Creates a folder  to hold the agent files. You move into that folder to perform the next steps.)
-
-   2)wget <copy the command in the Download>             (This package contains the tools needed to connect your machine to Azure DevOps.)
-
-   3)sudo apt update                                     (updating the application)
+1)(Creates a folder  to hold the agent files. You move into that folder to perform the next steps.)
+   ```shell
+   mkdir agent ; cd agent
+   ``` 
+2)(This package contains the tools needed to connect your machine to Azure DevOps.)
+   ```shell
+    wget <copy the command in the Download>
+   ```             
+3)(updating the application)
+   ```shell
+      sudo apt update
+   ```                                    
 
 
    4)Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory("vsts-agent-win-x64-4.255.0.zip", "$PWD")
