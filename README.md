@@ -85,6 +85,7 @@ Azure Devops complete CI CD process of Vote-App Using AKS with the Commands and 
  - Now go to the terminal and connect to the virtual machine.
 
  - When we click on the create agent on the pool of the azure devops we get all instructions and commands to create the agent.
+
 1)(Creates a folder  to hold the agent files. You move into that folder to perform the next steps.)
    ```shell
    mkdir agent ; cd agent
@@ -93,60 +94,70 @@ Azure Devops complete CI CD process of Vote-App Using AKS with the Commands and 
    ```shell
     wget <copy the command in the Download>
    ```             
-3)(updating the application)
+3)(update the application)
    ```shell
       sudo apt update
    ```                                    
 
-
-   4)Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory("vsts-agent-win-x64-4.255.0.zip", "$PWD")
       
-                                                         (This command extracts the downloaded ZIP file contents to the current directory. $PWD refers to the present working directory).
+ 4)(This command extracts the downloaded ZIP file contents to the current directory. $PWD refers to the present working directory).
+ ```shell
+Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory("vsts-agent-win-x64-4.255.0.zip", "$PWD")
+```
+
+5)(This command starts the configuration wizard.).
+   ```shell .\config.cmd ```  - for windows                         
+   ```shell .\config.sh ```   - for linux/mac
 
 
-   5).\config.cmd   - for windows                         (This command starts the configuration wizard.).
-     .\config.sh    - for linux/mac
+- Then You’ll be prompted to:
 
-    - Then You’ll be prompted to:
+Enter your Azure DevOps organization URL :  ```shell https://dev.azure.com/{your-organization} ```
 
-          Enter your Azure DevOps organization URL :  https://dev.azure.com/{your-organization}
+Provide a Personal Access Token (PAT) for authentication.             (You will find the PAT in the user settings of the azure devops)
 
-          Provide a Personal Access Token (PAT) for authentication.             (You will find the PAT in the user settings of the azure devops)
+Select the agent pool.   :  Enter agent pool name.
 
-          Select the agent pool.   :  Enter agent pool name.
-
-          - Now agent will be sucessfully added 
+- Now agent will be sucessfully added 
 
 
-   6) ./run.sh                                                   (Running the agent.)
-                                                                - Runs the agent in the foreground (console).
+6)(Running the agent.)
+- Runs the agent in the foreground (console).
 
-                                                                - This is optional and mainly useful for testing or temporary setups.
+- This is optional and mainly useful for testing or temporary setups.
 
-                                                                - If you chose to install as a service during setup, this step is not required.
-
+- If you chose to install as a service during setup, this step is not required.
+   ```shell
+    ./run.sh                                                   
+    ```
  
-
-
-
 
 * Now connecting to the AKS cluster.
 
-1) az login                                                                                                   (we want to login to the azure portal.)
+1)(we want to login to the azure portal.)                                                                                                  
+```shell
+az login
+```  
+2)(Downloads AKS credentials and updates your local kubeconfig to talk to your cluster.)
+
+```shell az aks get-credentials --name voteappcluster --overwrite-existing --resource-group vote-app-ci
+```        
+
+3)(Creates a new Kubernetes namespace called argocd. ArgoCD will be deployed and run inside this namespace.)
+```shell
+kubectl create namespace argocd
+```                                    
 
 
-2) az aks get-credentials --name voteappcluster --overwrite-existing --resource-group vote-app-ci             (Downloads AKS credentials and updates your local kubeconfig to talk to your cluster.
+
+4)(Installs ArgoCD components (UI, API server, controller, etc.) into the argocd namespace. The YAML is fetched directly from ArgoCD’s GitHub repo.)
+```shell kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```                    
 
 
-3) kubectl create namespace argocd                                     (Creates a new Kubernetes namespace called argocd. ArgoCD will be deployed and run inside this namespace.)
-
-
-
-
-4) kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml                       (Installs ArgoCD components (UI, API server, controller, etc.) into the argocd namespace. The YAML is fetched directly from ArgoCD’s GitHub repo.)
-
-
-5) kubectl get pods -n argocd                                      (Lists all pods in the argocd namespace to verify the deployment status.)
+5)(Lists all pods in the argocd namespace to verify the deployment status.)
+```shell kubectl get pods -n argocd
+```                                      
 
 
 
@@ -154,31 +165,37 @@ Azure Devops complete CI CD process of Vote-App Using AKS with the Commands and 
 
 - so we have to get the argocd login password
 
+6)(Lists secrets; one of them is argocd-initial-admin-secret which contains the admin password for ArgoCD UI.)
+```shell  kubectl get secrets -n argocd
+```                                
 
-6)  kubectl get secrets -n argocd                                  (Lists secrets; one of them is argocd-initial-admin-secret which contains the admin password for ArgoCD UI.)
+7)(Opens the secret in your default editor to view the base64-encoded admin password.)
+```shell  kubectl edit secret argocd-initial-admin-secret -n argocd      
+```
 
-
-7)  kubectl edit secret argocd-initial-admin-secret -n argocd      (Opens the secret in your default editor to view the base64-encoded admin password.)
-
-
-8)  echo UDhCV0hZYjJTWWdKbDRpQQ== | base64 --decode                (Decodes the base64-encoded password to plain text. You use this password to log into the ArgoCD web UI.)
-
-
-
-9)  kubectl get svc -n argocd                                      (Lists all services running in the argocd namespace.)
-
+8)(Decodes the base64-encoded password to plain text. You use this password to log into the ArgoCD web UI.)
+```shell  echo UDhCV0hZYjJTWWdKbDRpQQ== | base64 --decode
+```              
 
 
-10)  kubectl edit svc argocd-server -n argocd                      (argocd-server is the main UI/API service for ArgoCD so change that to nodeport. This opens the service manifest so you can change the service type from ClusterIP (default, internal only) to NodePort (accessible externally via node IP and port).
+9)(Lists all services running in the argocd namespace.)
+```shell  kubectl get svc -n argocd
+```                                    
 
 
-
-
-
-
-
-11)  kubectl get nodes -o wide                                        (Shows the IP addresses of your cluster nodes.)
+10)(argocd-server is the main UI/API service for ArgoCD so change that to nodeport. This opens the service manifest so you can change the service type from ClusterIP (default, internal only) to NodePort (accessible externally via node IP and port).
+```shell  kubectl edit svc argocd-server -n argocd
+```             
 
 
 
- -  Now you can access ArgoCD via the NodePort, e.g. http://<node-ip>:<node-port>. Don't forget to open the port in the VMSS of the AKS.
+
+
+
+11)(Shows the IP addresses of your cluster nodes.)
+```shell  kubectl get nodes -o wide
+```                                       
+
+
+
+-  Now you can access ArgoCD via the NodePort, e.g. ```shell   http://<node-ip>:<node-port>  ```. Don't forget to open the port in the VMSS of the AKS.
