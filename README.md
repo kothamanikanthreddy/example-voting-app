@@ -66,13 +66,9 @@ deal with them in Docker at a basic level.
 
 Azure Devops complete CI CD process of Vote-App Using AKS with the Commands and explanation.  
 
-
-*   For creating the agent.
-
-- Here we use a azure virtual machine as a agent.
+- Here we use a azure virtual machine as a agent for running a pipeline on it.
 
 - For that we should create a virtual machine and after creating we should integrate the pipelines with the agent.
-
 
 * Follow the steps to connect agent.
 
@@ -87,8 +83,9 @@ Azure Devops complete CI CD process of Vote-App Using AKS with the Commands and 
  - When we click on the create agent on the pool of the azure devops we get all instructions and commands to create the agent.
 
 1)(Creates a folder  to hold the agent files. You move into that folder to perform the next steps.)
+
    ```shell
-   mkdir agent ; cd agent
+     mkdir agent ; cd agent
    ``` 
 2)(This package contains the tools needed to connect your machine to Azure DevOps.)
    ```shell
@@ -102,16 +99,18 @@ Azure Devops complete CI CD process of Vote-App Using AKS with the Commands and 
       
  4)(This command extracts the downloaded ZIP file contents to the current directory. $PWD refers to the present working directory).
  ```shell
-Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory("vsts-agent-win-x64-4.255.0.zip", "$PWD")
-```
+   Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory("vsts-agent-win-x64-4.255.0.zip", "$PWD")
+ ```
 
 5)(This command starts the configuration wizard.).
    ```shell 
-   .\config.cmd
-   ```  - for windows                         
+     .\config.cmd
+   ```
+   - for windows                         
    ```shell
    .\config.sh
-   ```   - for linux/mac
+   ```
+   - for linux/mac
 
 
 - Then You’ll be prompted to:
